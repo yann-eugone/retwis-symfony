@@ -2,10 +2,17 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Symfony Retwis{% endblock %}</title>
+        <title>Symfony Retwis - {% block title 'Welcome' %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        <div>
+            {% if app.user %}
+                <a href="{{ path('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ path('register') }}">Register</a> or <a href="{{ path('login') }}">Login</a>
+            {% endif %}
+        </div>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

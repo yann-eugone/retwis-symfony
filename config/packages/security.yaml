@@ -1,14 +1,25 @@
 security:
+    encoders:
+        App\User\User:
+            algorithm: auto
+            cost: 12
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        users_in_memory: { memory: null }
+        users: { id: App\Security\UserProvider }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: lazy
-            provider: users_in_memory
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\Authenticator
+            logout:
+                path: logout
+                # where to redirect after logout
+                target: index
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
