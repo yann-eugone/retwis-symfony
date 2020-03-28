@@ -5,22 +5,14 @@
 {% block title user.username %}
 
 {% block body %}
-    <h2>@{{ user.username }}</h2>
+    <h1>@{{ user.username }}</h1>
     {% if is_granted(constant('App\\Follow\\Voter\\FollowVoter::FOLLOW'), user) %}
         <a href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
     {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
         <a href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
     {% endif %}
-    <h3>Followers ({{ followers.count }})</h3>
-    <ul>
-        {% for userFollower in followers.list %}
-            <li><a href="{{ path('user_profile', {'username': userFollower.username}) }}">@{{ userFollower.username }}</a></li>
-        {% endfor %}
-    </ul>
-    <h3>Following ({{ following.count }})</h3>
-    <ul>
-        {% for userFollowing in following.list %}
-            <li><a href="{{ path('user_profile', {'username': userFollowing.username}) }}">@{{ userFollowing.username }}</a></li>
-        {% endfor %}
-    </ul>
+    {{ render(controller('App\\Controller\\UserController::followers', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserController::following', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserController::personalTimeline', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserController::mainTimeline', {id: user.id})) }}
 {% endblock %}

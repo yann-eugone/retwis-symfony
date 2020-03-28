@@ -8,7 +8,12 @@
     <body>
         <div>
             <a href="{{ path('index') }}">Index</a> /
+            {% if is_granted(constant('App\\Post\\Voter\\PublishVoter::PUBLISH')) %}
+                <a href="{{ path('post_publish') }}">Publish</a> /
+            {% endif %}
             {% if app.user %}
+                Hello {{ app.user.username }}
+                <a href="{{ path('user_profile', {'username': 'me'}) }}">Your profile</a> /
                 <a href="{{ path('logout') }}">Logout</a>
             {% else %}
                 <a href="{{ path('register') }}">Register</a> or <a href="{{ path('login') }}">Login</a>

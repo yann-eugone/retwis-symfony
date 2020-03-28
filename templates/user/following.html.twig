@@ -1,0 +1,6 @@
+<h2>Following ({{ count }})</h2>
+<ul>
+    {% for user in following %}
+        <li><a href="{{ path('user_profile', {'username': user.username}) }}">@{{ user.username }}</a></li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ post.author.username }} : {{ post.message|slice(0, 50) }}
+{% endblock %}
+
+{% block body %}
+    <h1>Post from {{ post.author.username }}</h1>
+    <p><i>Posted at <strong>{{ post.published|date('Y-m-d H:i:s') }}</strong></i></p>
+    <code>{{ post.message|nl2br }}</code>
+{% endblock %}

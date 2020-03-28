@@ -1,0 +1,10 @@
+{# @var post \App\View\PostView #}
+<h2>Recently published posts</h2>
+<ul>
+    {% for post in posts %}
+        <li>
+            <i>({{ post.published|date('Y-m-d H:i:s') }})</i>
+            <a href="{{ path('post_show', {'id': post.hash}) }}">{{ post.message|slice(0, 50) }}</a>
+        </li>
+    {% endfor %}
+</ul>

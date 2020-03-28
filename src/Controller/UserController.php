@@ -4,38 +4,34 @@ namespace App\Controller;
 
 use App\Follow\Follow;
 use App\Follow\Voter\FollowVoter;
+use App\Post\PostStorage;
 use App\Redis\NotFoundException;
+use App\Timeline\MainTimeline;
+use App\Timeline\PersonalTimeline;
 use App\User\RecentlyRegistered;
 use App\User\User;
 use App\User\UserStorage;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\View\PostListView;
+use Hashids\HashidsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class UserController extends AbstractController
+final class UserController extends Controller
 {
     /**
      * @Route("/user/{username}", name="user_profile", methods=Request::METHOD_GET)
      */
-    public function profile(string $username, UserStorage $users, Follow $follow): Response
+    public function profile(string $username, UserStorage $users): Response
     {
         if ($username === 'me') {
             $user = $this->getAuthenticatedUserOr403();
         } else {
-            $user = $this->getUserOr404($username, $users);
+            $user = $this->getUserByUsernameOr404($username, $users);
         }
 
         return $this->render('user/profile.html.twig', [
             'user' => $user,
-            'followers' => [
-                'count' => $follow->followersCount($user->getId()),
-                'list' => $users->list($follow->followers($user->getId(), 0, 10)),
-            ],
-            'following' => [
-                'count' => $follow->followingCount($user->getId()),
-                'list' => $users->list($follow->following($user->getId(), 0, 10)),
-            ],
         ]);
     }
 
@@ -45,7 +41,7 @@ final class UserController extends AbstractController
     public function follow(string $username, UserStorage $users, Follow $follow): Response
     {
         $follower = $this->getAuthenticatedUserOr403();
-        $following = $this->getUserOr404($username, $users);
+        $following = $this->getUserByUsernameOr404($username, $users);
 
         $this->denyAccessUnlessGranted(FollowVoter::FOLLOW, $following);
 
@@ -60,7 +56,7 @@ final class UserController extends AbstractController
     public function unfollow(string $username, UserStorage $users, Follow $follow): Response
     {
         $follower = $this->getAuthenticatedUserOr403();
-        $following = $this->getUserOr404($username, $users);
+        $following = $this->getUserByUsernameOr404($username, $users);
 
         $this->denyAccessUnlessGranted(FollowVoter::UNFOLLOW, $following);
 
@@ -69,29 +65,74 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('user_profile', ['username' => $username]);
     }
 
-    public function recentlyRegistered(RecentlyRegistered $recentlyRegistered, UserStorage $users): Response
+    public function followers(int $id, UserStorage $users, Follow $follow): Response
     {
-        return $this->render('user/recently-registered.html.twig', [
-            'users' => $users->list($recentlyRegistered->ids()),
+        $user = $this->getUserByIdOr404($id, $users);
+
+        return $this->render('user/followers.html.twig', [
+            'count' => $follow->followersCount($user->getId()),
+            'followers' => $users->list($follow->followers($user->getId(), 0, 10)),
         ]);
     }
 
-    private function getUserOr404(string $username, UserStorage $users): User
+    public function following(int $id, UserStorage $users, Follow $follow): Response
+    {
+        $user = $this->getUserByIdOr404($id, $users);
+
+        return $this->render('user/following.html.twig', [
+            'count' => $follow->followingCount($user->getId()),
+            'following' => $users->list($follow->following($user->getId(), 0, 10)),
+        ]);
+    }
+
+    public function mainTimeline(
+        int $id,
+        UserStorage $users,
+        MainTimeline $mainTimeline,
+        PostStorage $posts,
+        HashidsInterface $hashids
+    ): Response {
+        $user = $this->getUserByIdOr404($id, $users);
+        $posts = $posts->list($mainTimeline->ids($user->getId()));
+
+        return $this->render('user/timeline/main.html.twig', [
+            'posts' => PostListView::new($posts, $users, $hashids),
+        ]);
+    }
+
+    public function personalTimeline(
+        int $id,
+        UserStorage $users,
+        PersonalTimeline $personalTimeline,
+        PostStorage $posts,
+        HashidsInterface $hashids
+    ): Response {
+        $user = $this->getUserByIdOr404($id, $users);
+        $posts = $posts->list($personalTimeline->ids($user->getId()));
+
+        return $this->render('user/timeline/personal.html.twig', [
+            'posts' => PostListView::new($posts, $users, $hashids),
+        ]);
+    }
+
+    public function recentlyRegistered(RecentlyRegistered $recentlyRegistered): Response
+    {
+        return $this->render('user/recently-registered.html.twig', [
+            'users' => $recentlyRegistered->list(),
+        ]);
+    }
+
+    private function getUserByUsernameOr404(string $username, UserStorage $users): User
+    {
+        return $this->getUserByIdOr404($users->id($username), $users);
+    }
+
+    private function getUserByIdOr404(int $id, UserStorage $users): User
     {
         try {
-            return $users->get($users->id($username));
+            return $users->get($id);
         } catch (NotFoundException $exception) {
             throw $this->createNotFoundException('Not Found', $exception);
         }
-    }
-
-    private function getAuthenticatedUserOr403(): User
-    {
-        $user = $this->getUser();
-        if (!$user instanceof User) {
-            throw $this->createAccessDeniedException();
-        }
-
-        return $user;
     }
 }

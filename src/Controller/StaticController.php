@@ -7,14 +7,13 @@ use App\User\Form\RegisterForm;
 use App\User\Form\RegisterFormModel;
 use App\User\UserStorage;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-final class StaticController extends AbstractController
+final class StaticController extends Controller
 {
     /**
      * @Route("/", name="index", methods=Request::METHOD_GET)

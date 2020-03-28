@@ -1,0 +1,8 @@
+{# @var post \App\View\PostView #}
+<ul>
+    {% for post in posts %}
+        <h3>Post from {{ post.author.username }}</h3>
+        <p><i>Posted at <strong>{{ post.published|date('Y-m-d H:i:s') }}</strong></i></p>
+        <code>{{ post.message|nl2br }}</code>
+    {% endfor %}
+</ul>
