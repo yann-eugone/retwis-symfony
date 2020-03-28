@@ -3,11 +3,10 @@
 namespace App\User;
 
 use App\User\Event\UserRegistered;
-use Generator;
 use Predis\ClientInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class RecentlyRegisteredUsers implements EventSubscriberInterface
+final class RecentlyRegistered implements EventSubscriberInterface
 {
     private const REDIS_KEY = 'users:recently-registered';
     private const LENGTH = 10;
@@ -36,12 +35,10 @@ final class RecentlyRegisteredUsers implements EventSubscriberInterface
     }
 
     /**
-     * @return Generator|User[]
+     * @return int[]
      */
-    public function get(): Generator
+    public function ids(): array
     {
-        foreach ($this->redis->lrange(self::REDIS_KEY, 0, -1) as $id) {
-            yield $this->users->get((int)$id);
-        }
+        return array_map('intval', $this->redis->lrange(self::REDIS_KEY, 0, -1));
     }
 }

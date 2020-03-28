@@ -6,6 +6,7 @@ use App\Redis\Identifiers;
 use App\Redis\Ids;
 use App\Redis\Objects;
 use App\User\Event\UserRegistered;
+use Generator;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
@@ -58,5 +59,17 @@ final class UserStorage
     public function id(string $username): int
     {
         return (int)$this->identifiers->id(User::class, $username);
+    }
+
+    /**
+     * @param iterable|int[] $ids
+     *
+     * @return Generator|User[]
+     */
+    public function list(iterable $ids): Generator
+    {
+        foreach ($ids as $id) {
+            yield $this->get($id);
+        }
     }
 }
