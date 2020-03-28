@@ -31,3 +31,10 @@ services:
         class: Predis\Client
         arguments:
             $parameters: '%env(resolve:REDIS_DSN)%'
+
+    Hashids\HashidsInterface: '@hashids'
+    hashids:
+        class: Hashids\Hashids
+        arguments:
+            $salt: '%env(APP_SECRET)%'
+            $minHashLength: 8

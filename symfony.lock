@@ -29,6 +29,9 @@
             "config/packages/dev/easy_log_handler.yaml"
         ]
     },
+    "hashids/hashids": {
+        "version": "4.0.0"
+    },
     "monolog/monolog": {
         "version": "2.0.2"
     },

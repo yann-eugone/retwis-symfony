@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.0",
+        "hashids/hashids": "^4.0",
         "phpdocumentor/reflection-docblock": "^3.0|^4.0",
         "predis/predis": "^1.1",
         "sensio/framework-extra-bundle": "^5.5",
