@@ -8,4 +8,11 @@
     <h1>Post from {{ post.author.username }}</h1>
     <p><i>Posted at <strong>{{ post.published|date('Y-m-d H:i:s') }}</strong></i></p>
     <code>{{ post.message|nl2br }}</code>
+    <div>
+        {% if is_granted(constant('App\\Like\\Voter\\LikeVoter::LIKE'), post) %}
+            <a href="{{ path('post_like', {'id': post.hash}) }}">Like ({{ post.likes }})</a>
+        {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
+            <a href="{{ path('post_unlike', {'id': post.hash}) }}">Unlike ({{ post.likes }})</a>
+        {% endif %}
+    </div>
 {% endblock %}
