@@ -36,17 +36,19 @@ final class UserStorage
         $this->events = $events;
     }
 
-    public function register(string $username, string $plainPassword): User
+    public function register(string $username, string $plainPassword, int $time = null): User
     {
+        $time ??= time();
+
         $id = $this->ids->id(User::class);
         $password = $this->password->getEncoder(User::class)
             ->encodePassword($plainPassword, null);
 
-        $user = new User($id, $username, $password);
+        $user = new User($id, $username, $password, $time);
 
         $this->objects->add((string)$id, $user);
         $this->identifiers->set(User::class, $id, $username);
-        $this->events->dispatch(new UserRegistered($id));
+        $this->events->dispatch(UserRegistered::fromUser($user));
 
         return $user;
     }

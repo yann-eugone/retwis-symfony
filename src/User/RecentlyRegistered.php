@@ -31,7 +31,7 @@ final class RecentlyRegistered implements EventSubscriberInterface
 
     public function onUserRegistered(UserRegistered $event): void
     {
-        $this->list->push(self::REDIS_KEY, (string)$event->getId(), self::LENGTH);
+        $this->list->push(self::REDIS_KEY, (string)$event->getId(), self::LENGTH, $event->getRegistered());
     }
 
     /**

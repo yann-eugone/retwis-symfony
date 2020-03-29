@@ -35,11 +35,13 @@ final class PostStorage
         $this->events = $events;
     }
 
-    public function publish(int $author, string $message): Post
+    public function publish(int $author, string $message, int $time = null): Post
     {
+        $time ??= time();
+
         $id = $this->ids->id(Post::class);
 
-        $post = new Post($id, $author, $message, time());
+        $post = new Post($id, $author, $message, $time);
 
         $this->objects->add((string)$id, $post);
         $this->events->dispatch(PostPublishedEvent::fromPost($post));

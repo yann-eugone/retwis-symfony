@@ -37,13 +37,16 @@ final class MainTimeline implements EventSubscriberInterface
     public function onPostPublished(PostPublishedEvent $event): void
     {
         foreach ($this->follow->followers($event->getAuthor()) as $followerId) {
-            $this->timelines->add(self::TIMELINE, $followerId, $event->getId(), $event->getTime());
+            $this->timelines->add(self::TIMELINE, $followerId, $event->getId(), $event->getPublished());
         }
     }
 
     public function onFollow(FollowEvent $event): void
     {
         $followingPosts = $this->personalTimeline->map($event->getFollowingId());
+        if (count($followingPosts) === 0) {
+            return;
+        }
 
         $this->timelines->addAll(self::TIMELINE, $event->getFollowerId(), $followingPosts);
     }
@@ -51,6 +54,9 @@ final class MainTimeline implements EventSubscriberInterface
     public function onUnfollow(UnfollowEvent $event): void
     {
         $followingPosts = $this->personalTimeline->ids($event->getFollowingId(), 0, -1);
+        if (count($followingPosts) === 0) {
+            return;
+        }
 
         $this->timelines->removeAll(self::TIMELINE, $event->getFollowerId(), $followingPosts);
     }

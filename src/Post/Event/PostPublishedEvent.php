@@ -12,14 +12,14 @@ final class PostPublishedEvent
 
     private string $message;
 
-    private int $time;
+    private int $published;
 
-    public function __construct(int $id, int $author, string $message, int $time)
+    public function __construct(int $id, int $author, string $message, int $published)
     {
         $this->id = $id;
         $this->author = $author;
         $this->message = $message;
-        $this->time = $time;
+        $this->published = $published;
     }
 
     public static function fromPost(Post $post): self
@@ -28,7 +28,7 @@ final class PostPublishedEvent
             $post->getId(),
             $post->getAuthor(),
             $post->getMessage(),
-            $post->getTime()
+            $post->getPublished()
         );
     }
 
@@ -47,8 +47,8 @@ final class PostPublishedEvent
         return $this->message;
     }
 
-    public function getTime(): int
+    public function getPublished(): int
     {
-        return $this->time;
+        return $this->published;
     }
 }

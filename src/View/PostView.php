@@ -40,7 +40,7 @@ final class PostView
             $hashids->encode($post->getId()),
             $users->get($post->getAuthor()),
             $post->getMessage(),
-            (new DateTimeImmutable())->setTimestamp($post->getTime()),
+            (new DateTimeImmutable())->setTimestamp($post->getPublished()),
             $like->count($post->getId())
         );
     }

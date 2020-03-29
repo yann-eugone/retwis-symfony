@@ -13,10 +13,10 @@ final class IdList
         $this->redis = $redis;
     }
 
-    public function push(string $list, string $id, int $length): void
+    public function push(string $list, string $id, int $length, int $score): void
     {
-        $this->redis->lpush($list, [$id]);
-        $this->redis->ltrim($list, 0, $length - 1);
+        $this->redis->zadd($list, [$id => $score]);
+        $this->redis->zremrangebyrank($list, 0, ($length + 1) * -1);
     }
 
     /**
@@ -26,6 +26,6 @@ final class IdList
      */
     public function ids(string $list): array
     {
-        return $this->redis->lrange($list, 0, -1);
+        return $this->redis->zrange($list, 0, -1);
     }
 }

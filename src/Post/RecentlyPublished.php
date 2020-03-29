@@ -31,7 +31,7 @@ final class RecentlyPublished implements EventSubscriberInterface
 
     public function onPostPublished(PostPublishedEvent $event): void
     {
-        $this->list->push(self::REDIS_KEY, (string)$event->getId(), self::LENGTH);
+        $this->list->push(self::REDIS_KEY, (string)$event->getId(), self::LENGTH, $event->getPublished());
     }
 
     /**

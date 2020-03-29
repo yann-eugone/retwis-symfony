@@ -20,11 +20,12 @@ final class Like
         return $this->redis->zcard($key);
     }
 
-    public function like(int $postId, int $userId): void
+    public function like(int $postId, int $userId, int $time = null): void
     {
+        $time ??= time();
         $key = $this->key($postId);
 
-        $this->redis->zadd($key, [$userId => time()]);
+        $this->redis->zadd($key, [$userId => $time]);
     }
 
     public function unlike(int $postId, int $userId): void

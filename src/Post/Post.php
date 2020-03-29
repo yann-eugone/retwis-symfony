@@ -24,14 +24,14 @@ final class Post
     /**
      * @Groups({"redis"})
      */
-    private int $time;
+    private int $published;
 
-    public function __construct(int $id, int $author, string $message, int $time)
+    public function __construct(int $id, int $author, string $message, int $published)
     {
         $this->id = $id;
         $this->author = $author;
         $this->message = $message;
-        $this->time = $time;
+        $this->published = $published;
     }
 
     public function getId(): int
@@ -49,8 +49,8 @@ final class Post
         return $this->message;
     }
 
-    public function getTime(): int
+    public function getPublished(): int
     {
-        return $this->time;
+        return $this->published;
     }
 }

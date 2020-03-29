@@ -25,7 +25,7 @@ final class PersonalTimeline implements EventSubscriberInterface
 
     public function onPostPublished(PostPublishedEvent $event): void
     {
-        $this->timelines->add(self::TIMELINE, $event->getAuthor(), $event->getId(), $event->getTime());
+        $this->timelines->add(self::TIMELINE, $event->getAuthor(), $event->getId(), $event->getPublished());
     }
 
     public function ids(int $authorId, int $start = 0, int $stop = 9): array

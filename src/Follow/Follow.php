@@ -47,17 +47,17 @@ final class Follow
         return $this->redis->zcard($key);
     }
 
-    public function follow(int $followerId, int $followingId): void
+    public function follow(int $followerId, int $followingId, int $time = null): void
     {
-        $score = time();
+        $time ??= time();
 
         // add $followerId to $followingId followers
         $followersKey = $this->followersKey($followingId);
-        $this->redis->zadd($followersKey, [$followerId => $score]);
+        $this->redis->zadd($followersKey, [$followerId => $time]);
 
         // add $followingId to $followerId following
         $followingKey = $this->followingKey($followerId);
-        $this->redis->zadd($followingKey, [$followingId => $score]);
+        $this->redis->zadd($followingKey, [$followingId => $time]);
 
         $this->events->dispatch(new FollowEvent($followerId, $followingId));
     }
