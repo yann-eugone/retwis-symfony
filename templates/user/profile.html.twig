@@ -11,8 +11,8 @@
     {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
         <a href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
     {% endif %}
-    {{ render(controller('App\\Controller\\UserController::followers', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserController::following', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserController::personalTimeline', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserController::mainTimeline', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserFollowController::followers', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserFollowController::following', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserTimelineController::personalTimeline', {id: user.id})) }}
+    {{ render(controller('App\\Controller\\UserTimelineController::mainTimeline', {id: user.id})) }}
 {% endblock %}

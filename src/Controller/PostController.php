@@ -5,31 +5,17 @@ namespace App\Controller;
 use App\Like\Like;
 use App\Post\Form\PublishForm;
 use App\Post\Form\PublishFormModel;
-use App\Post\Post;
-use App\Post\PostStorage;
 use App\Post\RecentlyPublished;
 use App\Post\Voter\PublishVoter;
-use App\Redis\NotFoundException;
 use App\User\UserStorage;
 use App\View\PostListView;
 use App\View\PostView;
-use Hashids\HashidsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class PostController extends Controller
+final class PostController extends AbstractPostController
 {
-    private PostStorage $posts;
-
-    private HashidsInterface $hashids;
-
-    public function __construct(PostStorage $posts, HashidsInterface $hashids)
-    {
-        $this->posts = $posts;
-        $this->hashids = $hashids;
-    }
-
     /**
      * @Route("/post/publish", name="post_publish", methods={Request::METHOD_GET, Request::METHOD_POST})
      */
@@ -74,19 +60,5 @@ final class PostController extends Controller
         return $this->render('post/recently-published.html.twig', [
             'posts' => $postsListView,
         ]);
-    }
-
-    private function getPostByHashIdOr404(string $hash): Post
-    {
-        $id = $this->hashids->decode($hash)[0] ?? null;
-        if ($id === null) {
-            throw $this->createNotFoundException();
-        }
-
-        try {
-            return $this->posts->get((int)$id);
-        } catch (NotFoundException $exception) {
-            throw $this->createNotFoundException('Not Found', $exception);
-        }
     }
 }
