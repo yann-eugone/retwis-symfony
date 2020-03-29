@@ -28,6 +28,7 @@
     },
     "require-dev": {
         "easycorp/easy-log-handler": "^1.0.7",
+        "fzaninotto/faker": "^1.9",
         "symfony/debug-bundle": "^5.0",
         "symfony/maker-bundle": "^1.14",
         "symfony/stopwatch": "^5.0",

@@ -29,6 +29,9 @@
             "config/packages/dev/easy_log_handler.yaml"
         ]
     },
+    "fzaninotto/faker": {
+        "version": "v1.9.1"
+    },
     "hashids/hashids": {
         "version": "4.0.0"
     },
