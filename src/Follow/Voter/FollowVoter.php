@@ -37,7 +37,7 @@ final class FollowVoter extends Voter
     {
         $user = $token->getUser();
         if (!$user instanceof User) {
-            throw UnreachableCodeException::classMethodPart(__METHOD__, __LINE__);
+            return false;
         }
 
         if ($user->getId() === $subject->getId()) {

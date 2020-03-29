@@ -9,6 +9,8 @@
                 <a href="{{ path('post_like', {'id': post.hash}) }}">Like ({{ post.likes }})</a>
             {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
                 <a href="{{ path('post_unlike', {'id': post.hash}) }}">Unlike ({{ post.likes }})</a>
+            {% else %}
+                Likes ({{ post.likes }})
             {% endif %}
         </div>
     {% endfor %}

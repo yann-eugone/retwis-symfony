@@ -39,7 +39,7 @@ final class LikeVoter extends Voter
     {
         $user = $token->getUser();
         if (!$user instanceof User) {
-            throw UnreachableCodeException::classMethodPart(__METHOD__, __LINE__);
+            return false;
         }
 
         $isLiking = $this->like->isLiking($subject->getId(), $user->getId());
