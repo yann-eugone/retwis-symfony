@@ -1,0 +1,10 @@
+<aside class="col-md-4 retwis-sidebar">
+    <div class="p-3 mb-3 bg-light rounded">
+        <h4 class="font-italic">About</h4>
+        <p class="mb-0">
+            Hello! Retwis is a very simple clone of <a href="http://twitter.com">Twitter</a>,
+            as a demo for the <a href="https://redis.io">Redis</a> key-value database.
+        </p>
+    </div>
+    {{ render(controller('App\\Controller\\UserController::recentlyRegistered')) }}
+</aside>

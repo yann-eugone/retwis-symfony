@@ -41,6 +41,13 @@ final class Timelines
         $this->redis->zrem($key, ...$posts);
     }
 
+    public function count(string $timeline, int $authorId): int
+    {
+        $key = $this->key($timeline, $authorId);
+
+        return $this->redis->zcard($key);
+    }
+
     public function ids(string $timeline, int $authorId, int $start = 0, int $stop = 9): array
     {
         $key = $this->key($timeline, $authorId);

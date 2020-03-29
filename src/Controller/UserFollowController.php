@@ -22,7 +22,7 @@ final class UserFollowController extends AbstractUserController
 
         $follow->follow($follower->getId(), $following->getId());
 
-        return $this->redirectToRoute('user_profile', ['username' => $username]);
+        return $this->redirectToRefererOrRoute('user_profile', ['username' => $username]);
     }
 
     /**
@@ -37,16 +37,15 @@ final class UserFollowController extends AbstractUserController
 
         $follow->unfollow($follower->getId(), $following->getId());
 
-        return $this->redirectToRoute('user_profile', ['username' => $username]);
+        return $this->redirectToRefererOrRoute('user_profile', ['username' => $username]);
     }
 
     public function followers(int $id, Follow $follow): Response
     {
         $user = $this->getUserByIdOr404($id);
 
-        return $this->render('user/followers.html.twig', [
-            'count' => $follow->followersCount($user->getId()),
-            'followers' => $this->users->list($follow->followers($user->getId(), 0, 10)),
+        return $this->render('user/list.html.twig', [
+            'users' => $this->users->list($follow->followers($user->getId(), 0, 10)),
         ]);
     }
 
@@ -54,9 +53,8 @@ final class UserFollowController extends AbstractUserController
     {
         $user = $this->getUserByIdOr404($id);
 
-        return $this->render('user/following.html.twig', [
-            'count' => $follow->followingCount($user->getId()),
-            'following' => $this->users->list($follow->following($user->getId(), 0, 10)),
+        return $this->render('user/list.html.twig', [
+            'users' => $this->users->list($follow->following($user->getId(), 0, 10)),
         ]);
     }
 }

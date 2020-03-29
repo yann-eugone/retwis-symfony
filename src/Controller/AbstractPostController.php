@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Like\Like;
 use App\Post\Post;
 use App\Post\PostStorage;
 use App\Redis\NotFoundException;

@@ -22,7 +22,7 @@ final class UserTimelineController extends AbstractUserController
         $user = $this->getUserByIdOr404($id);
         $posts = $posts->list($mainTimeline->ids($user->getId()));
 
-        return $this->render('user/timeline/main.html.twig', [
+        return $this->render('post/list.html.twig', [
             'posts' => PostListView::new($posts, $this->users, $hashids, $like),
         ]);
     }
@@ -37,7 +37,7 @@ final class UserTimelineController extends AbstractUserController
         $user = $this->getUserByIdOr404($id);
         $posts = $posts->list($personalTimeline->ids($user->getId()));
 
-        return $this->render('user/timeline/personal.html.twig', [
+        return $this->render('post/list.html.twig', [
             'posts' => PostListView::new($posts, $this->users, $hashids, $like),
         ]);
     }

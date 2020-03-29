@@ -1,7 +1,0 @@
-{% extends 'base.html.twig' %}
-
-{% block body %}
-    <h1>Welcome to Symfony Retwis</h1>
-    {{ render(controller('App\\Controller\\UserController::recentlyRegistered')) }}
-    {{ render(controller('App\\Controller\\PostController::recentlyPublished')) }}
-{% endblock %}

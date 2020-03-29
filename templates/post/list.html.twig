@@ -1,0 +1,25 @@
+{# @var post \App\View\PostView #}
+{% for post in posts %}
+    <div class="retwis-post">
+        <p class="retwis-post-meta">
+            {{ post.published|date('F d, Y') }}
+            by <a href="{{ path('user_profile', {'username': post.author.username}) }}">@{{ post.author.username }}</a>
+        </p>
+        {{ post.message|nl2br }}
+        <div class="retwis-post-actions d-flex justify-content-end align-items-center">
+            {% if is_granted(constant('App\\Like\\Voter\\LikeVoter::LIKE'), post) %}
+                <a class="btn btn-sm btn-outline-primary" href="{{ path('post_like', {'id': post.hash}) }}">
+                    Like ({{ post.likes }})
+                </a>
+            {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
+                <a class="btn btn-sm btn-outline-danger" href="{{ path('post_unlike', {'id': post.hash}) }}">
+                    Unlike ({{ post.likes }})
+                </a>
+            {% else %}
+                <button class="btn btn-sm btn-outline-secondary">
+                    Likes ({{ post.likes }})
+                </button>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

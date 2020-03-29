@@ -21,7 +21,7 @@ final class PostLikeController extends AbstractPostController
 
         $like->like($post->getId(), $liker->getId());
 
-        return $this->redirectToRoute('post_show', ['id' => $id]);
+        return $this->redirectToRefererOrRoute('post_show', ['id' => $id]);
     }
 
     /**
@@ -35,6 +35,6 @@ final class PostLikeController extends AbstractPostController
 
         $like->unlike($post->getId(), $liker->getId());
 
-        return $this->redirectToRoute('post_show', ['id' => $id]);
+        return $this->redirectToRefererOrRoute('post_show', ['id' => $id]);
     }
 }

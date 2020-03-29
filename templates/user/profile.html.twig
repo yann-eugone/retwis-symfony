@@ -7,12 +7,32 @@
 {% block body %}
     <h1>@{{ user.username }}</h1>
     {% if is_granted(constant('App\\Follow\\Voter\\FollowVoter::FOLLOW'), user) %}
-        <a href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
+        <a class="btn btn-sm btn-outline-primary" href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
     {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
-        <a href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
+        <a class="btn btn-sm btn-primary" href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
     {% endif %}
-    {{ render(controller('App\\Controller\\UserFollowController::followers', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserFollowController::following', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserTimelineController::personalTimeline', {id: user.id})) }}
-    {{ render(controller('App\\Controller\\UserTimelineController::mainTimeline', {id: user.id})) }}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link {% if section == 'timeline' %}active{% endif %}"
+               href="{{ path('user_profile', {'username': user.username}) }}">Posts ({{ posts }})</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if section == 'followers' %}active{% endif %}"
+               href="{{ path('user_followers', {'username': user.username}) }}">Followers ({{ followers }})</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if section == 'following' %}active{% endif %}"
+               href="{{ path('user_following', {'username': user.username}) }}">Following ({{ following }})</a>
+        </li>
+    </ul>
+    {% if section == 'timeline' %}
+        <h3 class="pb-3 mb-4 font-italic border-bottom">User published posts</h3>
+        {{ render(controller('App\\Controller\\UserTimelineController::personalTimeline', {id: user.id})) }}
+    {% elseif section == 'followers' %}
+        <h3 class="pb-3 mb-4 font-italic border-bottom">User followers</h3>
+        {{ render(controller('App\\Controller\\UserFollowController::followers', {id: user.id})) }}
+    {% elseif section == 'following' %}
+        <h3 class="pb-3 mb-4 font-italic border-bottom">User following</h3>
+        {{ render(controller('App\\Controller\\UserFollowController::following', {id: user.id})) }}
+    {% endif %}
 {% endblock %}

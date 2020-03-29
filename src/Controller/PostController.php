@@ -57,7 +57,7 @@ final class PostController extends AbstractPostController
         $posts = $recentlyPublished->list();
         $postsListView = PostListView::new($posts, $users, $this->hashids, $like);
 
-        return $this->render('post/recently-published.html.twig', [
+        return $this->render('post/list.html.twig', [
             'posts' => $postsListView,
         ]);
     }

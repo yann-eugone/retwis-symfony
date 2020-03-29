@@ -20,7 +20,11 @@ final class StaticController extends Controller
      */
     public function index(): Response
     {
-        return $this->render('index.html.twig');
+        if ($this->getUser()) {
+            return $this->render('index-authenticated.html.twig');
+        }
+
+        return $this->render('index-anonymous.html.twig');
     }
 
     /**
@@ -58,10 +62,6 @@ final class StaticController extends Controller
      */
     public function login(AuthenticationUtils $auth): Response
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('index');
-        }
-
         return $this->render('login.html.twig', [
             'last_username' => $auth->getLastUsername(),
             'error' => $auth->getLastAuthenticationError(),

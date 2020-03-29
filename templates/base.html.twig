@@ -8,20 +8,11 @@
         {% endblock %}
     </head>
     <body>
-        <div>
-            <a href="{{ path('index') }}">Index</a> /
-            {% if is_granted(constant('App\\Post\\Voter\\PublishVoter::PUBLISH')) %}
-                <a href="{{ path('post_publish') }}">Publish</a> /
-            {% endif %}
-            {% if app.user %}
-                Hello {{ app.user.username }}
-                <a href="{{ path('user_profile', {'username': 'me'}) }}">Your profile</a> /
-                <a href="{{ path('logout') }}">Logout</a>
-            {% else %}
-                <a href="{{ path('register') }}">Register</a> or <a href="{{ path('login') }}">Login</a>
-            {% endif %}
+        <div class="container">
+            {% include '_header.html.twig' %}
+            {% block body %}{% endblock %}
         </div>
-        {% block body %}{% endblock %}
+        {% include '_footer.html.twig' %}
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}

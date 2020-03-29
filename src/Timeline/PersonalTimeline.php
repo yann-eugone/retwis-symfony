@@ -28,6 +28,11 @@ final class PersonalTimeline implements EventSubscriberInterface
         $this->timelines->add(self::TIMELINE, $event->getAuthor(), $event->getId(), $event->getPublished());
     }
 
+    public function count(int $authorId): int
+    {
+        return $this->timelines->count(self::TIMELINE, $authorId);
+    }
+
     public function ids(int $authorId, int $start = 0, int $stop = 9): array
     {
         return $this->timelines->ids(self::TIMELINE, $authorId, $start, $stop);
