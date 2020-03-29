@@ -3,7 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>Symfony Retwis - {% block title 'Welcome' %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
     </head>
     <body>
         <div>
@@ -20,6 +22,8 @@
             {% endif %}
         </div>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>

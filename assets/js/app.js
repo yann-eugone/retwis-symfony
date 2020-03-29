@@ -6,9 +6,11 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import '../css/app.css';
+import '../css/app.scss';
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
+import $ from 'jquery'
+import 'bootstrap'
 
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+$(document).ready(function () {
+  console.log('app started');
+});
