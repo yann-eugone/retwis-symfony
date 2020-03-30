@@ -1,14 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ post.author.username }} : {{ post.message|slice(0, 50) }}
+    {{ post.author.name }} : {{ post.message|slice(0, 50) }}
 {% endblock %}
 
 {% block body %}
     <div class="retwis-post">
         <h1 class="pb-3 mb-4 font-italic border-bottom">
             {{ post.published|date('F d, Y') }}
-            by <a href="{{ path('user_profile', {'username': post.author.username}) }}">@{{ post.author.username }}</a>
+            by <a href="{{ path('user_profile', {'username': post.author.username}) }}">
+                <strong>{{ post.author.name }}</strong>
+                <small>@{{ post.author.username }}</small>
+            </a>
         </h1>
         {{ post.message|nl2br }}
         <div class="retwis-post-actions text-right">

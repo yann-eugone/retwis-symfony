@@ -9,6 +9,12 @@ final class RegisterFormModel
 {
     /**
      * @Assert\NotNull()
+     * @Assert\Length(max=50)
+     */
+    public ?string $name = null;
+
+    /**
+     * @Assert\NotNull()
      * @Assert\Length(min=5, max=25)
      * @UniqueUsername()
      */

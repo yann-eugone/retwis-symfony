@@ -88,9 +88,29 @@ final class LoadFixturesCommand extends Command
         $io->progressStart($countUsers);
         do {
             $username = $faker->unique()->userName;
+            if ($faker->boolean(80)) {
+                $name = $faker->firstName;
+                if ($faker->boolean(80)) {
+                    $name .= ' '.$faker->lastName;
+                }
+            } else {
+                $name = $faker->userName;
+            }
+
             $io->progressAdvance();
 
-            $user = $this->users->register($username, $username, $this->timestamp($faker));
+            $user = $this->users->register($name, $username, $this->timestamp($faker));
+
+            if ($faker->boolean(80)) {
+                $bio = $faker->boolean(80) ? $faker->text(160) : null;
+                $location = $faker->boolean(80) ? $faker->country : null;
+                $website = null;
+
+                if ($bio !== null || $location !== null || $website !== null) {
+                    $user->fillProfile($name, $bio, $location, $website);
+                    $this->users->update($user);
+                }
+            }
 
             yield $user->getId() => $user;
         } while (--$idx);

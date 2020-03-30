@@ -2,7 +2,7 @@
     <div class="row flex-nowrap justify-content-between align-items-center">
         <div class="col-3 pt-1">
             {% if app.user %}
-                <a class="btn btn-sm btn-outline-primary" href="{{ path('user_profile', {'username': 'me'}) }}">Your proifle</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ path('user_profile', {'username': app.user.username}) }}">Your profile</a>
             {% endif %}
             {% if is_granted(constant('App\\Post\\Voter\\PublishVoter::PUBLISH')) %}
                 <a class="btn btn-sm btn-primary" href="{{ path('post_publish') }}">Publish</a>

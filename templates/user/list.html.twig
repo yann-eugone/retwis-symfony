@@ -1,7 +1,10 @@
 {# @var user \App\User\User #}
 {% for user in users %}
     <div class="retwis-user">
-        <a href="{{ path('user_profile', {'username': user.username}) }}">@{{ user.username }}</a>
+        <a href="{{ path('user_profile', {'username': user.username}) }}">
+            <strong>{{ user.name }}</strong>
+            <small>@{{ user.username }}</small>
+        </a>
         {% if is_granted(constant('App\\Follow\\Voter\\FollowVoter::FOLLOW'), user) %}
             <a class="btn btn-sm btn-outline-primary" href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
         {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}

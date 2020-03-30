@@ -5,12 +5,36 @@
 {% block title user.username %}
 
 {% block body %}
-    <h1 class="pb-3 mb-4 font-italic border-bottom">@{{ user.username }}</h1>
-    {% if is_granted(constant('App\\Follow\\Voter\\FollowVoter::FOLLOW'), user) %}
-        <a class="btn btn-sm btn-outline-primary" href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
-    {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
-        <a class="btn btn-sm btn-primary" href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
+    <h1 class="pb-3 mb-4 font-italic border-bottom retwis-user-profile-name">
+        {{ user.name }}<br>
+        <small class="text-muted">@{{ user.username }}</small>
+    </h1>
+
+    {% if user.bio %}
+        <div class="retwis-user-profile-bio">{{ user.bio }}</div>
     {% endif %}
+
+    <div class="row">
+        <div class="col-6 flex-nowrap justify-content-between align-items-center">
+            {% if user.location %}
+                <span class="retwis-user-profile-location text-muted">{{ user.location }}</span>
+            {% endif %}
+            {% if user.website %}
+                <a class="retwis-user-profile-website" href="{{ user.website }}">{{ user.website }}</a>
+            {% endif %}
+            <span class="text-muted">Registered on {{ user.registered|date('F d, Y') }}</span>
+        </div>
+        <div class="col-6 text-right">
+            {% if app.user and app.user.id == user.id %}
+                <a class="btn btn-sm btn-outline-primary" href="{{ path('user_fill_profile') }}">Fill profile</a>
+            {% endif %}
+            {% if is_granted(constant('App\\Follow\\Voter\\FollowVoter::FOLLOW'), user) %}
+                <a class="btn btn-sm btn-outline-primary" href="{{ path('user_follow', {'username': user.username}) }}">Follow</a>
+            {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
+                <a class="btn btn-sm btn-primary" href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
+            {% endif %}
+        </div>
+    </div>
     <ul class="retwis-user-profile-menu nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link {% if section == 'timeline' %}active{% endif %}"
