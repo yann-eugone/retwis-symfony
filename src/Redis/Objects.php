@@ -40,6 +40,14 @@ final class Objects
         $this->redis->hmset($key, $dictionary);
     }
 
+    public function update(string $identity, object $object): void
+    {
+        $key = $this->key($this->key->object($object), $identity);
+        $dictionary = $this->dictionary($object);
+
+        $this->redis->hmset($key, $dictionary);
+    }
+
     public function get(string $class, string $identity): object
     {
         $key = $this->key($this->key->class($class), $identity);

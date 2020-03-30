@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Follow\Follow;
 use App\Like\Like;
 use App\Timeline\PersonalTimeline;
+use App\User\Form\FillProfileForm;
+use App\User\Form\FillProfileFormModel;
 use App\User\RecentlyRegistered;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,11 +31,7 @@ final class UserController extends AbstractUserController
         PersonalTimeline $timeline,
         Like $like
     ): Response {
-        if ($username === 'me') {
-            $user = $this->getAuthenticatedUserOr403();
-        } else {
-            $user = $this->getUserByUsernameOr404($username);
-        }
+        $user = $this->getUserByUsernameOr404($username);
 
         return $this->render('user/profile.html.twig', [
             'user' => $user,
@@ -43,6 +41,29 @@ final class UserController extends AbstractUserController
             'following' => $follow->followingCount($user->getId()),
             'likes' => $like->postCount($user->getId()),
         ]);
+    }
+
+    /**
+     * @Route("/settings/profile", name="user_fill_profile", methods={Request::METHOD_GET, Request::METHOD_POST})
+     */
+    public function fillProfile(Request $request): Response
+    {
+        $user = $this->getAuthenticatedUserOr403();
+
+        $profile = FillProfileFormModel::fromUser($user);
+        $form = $this->createForm(FillProfileForm::class, $profile);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('user/profile-fill.html.twig', [
+                'user' => $user,
+                'form' => $form->createView(),
+            ]);
+        }
+
+        $user->fillProfile($profile->name, $profile->bio, $profile->location, $profile->website);
+        $this->users->update($user);
+
+        return $this->redirectToRoute('user_profile', ['username' => $user->getUsername()]);
     }
 
     public function recentlyRegistered(RecentlyRegistered $recentlyRegistered): Response

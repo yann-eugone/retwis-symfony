@@ -47,7 +47,7 @@ final class StaticController extends Controller
             return $this->render('register.html.twig', ['form' => $form->createView()]);
         }
 
-        $user = $users->register($register->username, $register->password);
+        $user = $users->register($register->name, $register->username, $register->password);
 
         $response = $guard->authenticateUserAndHandleSuccess($user, $request, $authenticator, 'main');
         if (!$response) {
