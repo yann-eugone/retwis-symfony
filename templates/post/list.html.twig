@@ -6,13 +6,16 @@
             by <a href="{{ path('user_profile', {'username': post.author.username}) }}">@{{ post.author.username }}</a>
         </p>
         {{ post.message|nl2br }}
-        <div class="retwis-post-actions d-flex justify-content-end align-items-center">
+        <div class="retwis-post-actions text-right">
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('post_show', {'id': post.hash}) }}">
+                Show
+            </a>
             {% if is_granted(constant('App\\Like\\Voter\\LikeVoter::LIKE'), post) %}
-                <a class="btn btn-sm btn-outline-primary" href="{{ path('post_like', {'id': post.hash}) }}">
+                <a class="btn btn-sm btn-outline-danger" href="{{ path('post_like', {'id': post.hash}) }}">
                     Like ({{ post.likes }})
                 </a>
             {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
-                <a class="btn btn-sm btn-outline-danger" href="{{ path('post_unlike', {'id': post.hash}) }}">
+                <a class="btn btn-sm btn-danger" href="{{ path('post_unlike', {'id': post.hash}) }}">
                     Unlike ({{ post.likes }})
                 </a>
             {% else %}

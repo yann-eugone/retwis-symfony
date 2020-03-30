@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Like\Like;
 use App\Like\Voter\LikeVoter;
+use App\User\UserStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,5 +37,27 @@ final class PostLikeController extends AbstractPostController
         $like->unlike($post->getId(), $liker->getId());
 
         return $this->redirectToRefererOrRoute('post_show', ['id' => $id]);
+    }
+
+    public function userLiking(int $id, Like $like, UserStorage $users): Response
+    {
+        $post = $this->getPostByIdOr404($id);
+
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $like->userCount($post->getId());
+        $count = 10;
+        $start = $request->query->getInt('start');
+
+        return $this->render('user/list.html.twig', [
+            'users' => $users->list($like->listUserIds($post->getId(), $start, $count)),
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
+        ]);
     }
 }

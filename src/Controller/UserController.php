@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Follow\Follow;
+use App\Like\Like;
 use App\Timeline\PersonalTimeline;
 use App\User\RecentlyRegistered;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,9 +19,16 @@ final class UserController extends AbstractUserController
      *     defaults={"section"="followers"})
      * @Route("/user/{username}/following", name="user_following", methods=Request::METHOD_GET,
      *     defaults={"section"="following"})
+     * @Route("/user/{username}/likes", name="user_likes", methods=Request::METHOD_GET,
+     *     defaults={"section"="likes"})
      */
-    public function profile(string $username, string $section, Follow $follow, PersonalTimeline $timeline): Response
-    {
+    public function profile(
+        string $username,
+        string $section,
+        Follow $follow,
+        PersonalTimeline $timeline,
+        Like $like
+    ): Response {
         if ($username === 'me') {
             $user = $this->getAuthenticatedUserOr403();
         } else {
@@ -33,6 +41,7 @@ final class UserController extends AbstractUserController
             'posts' => $timeline->count($user->getId()),
             'followers' => $follow->followersCount($user->getId()),
             'following' => $follow->followingCount($user->getId()),
+            'likes' => $like->postCount($user->getId()),
         ]);
     }
 

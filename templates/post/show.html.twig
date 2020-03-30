@@ -5,16 +5,33 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Post from <a href="{{ path('user_profile', {'username': post.author.username}) }}">@{{ post.author.username }}</a></h1>
-    <p><i>Posted at <strong>{{ post.published|date('Y-m-d H:i:s') }}</strong></i></p>
-    <code>{{ post.message|nl2br }}</code>
-    <div>
-        {% if is_granted(constant('App\\Like\\Voter\\LikeVoter::LIKE'), post) %}
-            <a href="{{ path('post_like', {'id': post.hash}) }}">Like ({{ post.likes }})</a>
-        {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
-            <a href="{{ path('post_unlike', {'id': post.hash}) }}">Unlike ({{ post.likes }})</a>
-        {% else %}
-            Likes ({{ post.likes }})
-        {% endif %}
+    <div class="retwis-post">
+        <h1 class="pb-3 mb-4 font-italic border-bottom">
+            {{ post.published|date('F d, Y') }}
+            by <a href="{{ path('user_profile', {'username': post.author.username}) }}">@{{ post.author.username }}</a>
+        </h1>
+        {{ post.message|nl2br }}
+        <div class="retwis-post-actions text-right">
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('post_show', {'id': post.hash}) }}">
+                Show
+            </a>
+            {% if is_granted(constant('App\\Like\\Voter\\LikeVoter::LIKE'), post) %}
+                <a class="btn btn-sm btn-outline-danger" href="{{ path('post_like', {'id': post.hash}) }}">
+                    Like ({{ post.likes }})
+                </a>
+            {% elseif is_granted(constant('App\\Like\\Voter\\LikeVoter::UNLIKE'), post) %}
+                <a class="btn btn-sm btn-danger" href="{{ path('post_unlike', {'id': post.hash}) }}">
+                    Unlike ({{ post.likes }})
+                </a>
+            {% else %}
+                <button class="btn btn-sm btn-outline-secondary">
+                    Likes ({{ post.likes }})
+                </button>
+            {% endif %}
+        </div>
+        <div class="retwis-post-likes">
+            <h3 class="pb-3 mb-4 font-italic border-bottom">Users that liked</h3>
+            {{ render(controller('App\\Controller\\PostLikeController::userLiking', {id: post.id})) }}
+        </div>
     </div>
 {% endblock %}

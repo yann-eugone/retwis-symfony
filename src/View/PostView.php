@@ -41,7 +41,7 @@ final class PostView
             $users->get($post->getAuthor()),
             $post->getMessage(),
             (new DateTimeImmutable())->setTimestamp($post->getPublished()),
-            $like->count($post->getId())
+            $like->postCount($post->getId())
         );
     }
 

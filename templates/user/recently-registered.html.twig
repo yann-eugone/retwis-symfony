@@ -1,8 +1,2 @@
 <h4 class="font-italic">Recently registered users</h4>
-<ol class="list-unstyled mb-0">
-    {% for user in users %}
-        <li>
-            <a href="{{ path('user_profile', {'username': user.username}) }}">@{{ user.username }}</a>
-        </li>
-    {% endfor %}
-</ol>
+{% include 'user/list.html.twig' %}

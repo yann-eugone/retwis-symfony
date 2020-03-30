@@ -26,6 +26,11 @@ abstract class AbstractPostController extends Controller
             throw $this->createNotFoundException();
         }
 
+        return $this->getPostByIdOr404($id);
+    }
+
+    protected function getPostByIdOr404(int $id): Post
+    {
         try {
             return $this->posts->get((int)$id);
         } catch (NotFoundException $exception) {
