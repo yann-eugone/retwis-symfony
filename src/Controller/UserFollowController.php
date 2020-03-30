@@ -44,8 +44,24 @@ final class UserFollowController extends AbstractUserController
     {
         $user = $this->getUserByIdOr404($id);
 
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $follow->followersCount($user->getId());
+        $count = 10;
+        $start = $request->query->getInt('start');
+        $users = $this->users->list(
+            $follow->followers($user->getId(), $start, $start + $count - 1)
+        );
+
         return $this->render('user/list.html.twig', [
-            'users' => $this->users->list($follow->followers($user->getId(), 0, 10)),
+            'users' => $users,
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
         ]);
     }
 
@@ -53,8 +69,24 @@ final class UserFollowController extends AbstractUserController
     {
         $user = $this->getUserByIdOr404($id);
 
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $follow->followingCount($user->getId());
+        $count = 10;
+        $start = $request->query->getInt('start');
+        $users = $this->users->list(
+            $follow->following($user->getId(), $start, $start + $count - 1)
+        );
+
         return $this->render('user/list.html.twig', [
-            'users' => $this->users->list($follow->following($user->getId(), 0, 10)),
+            'users' => $users,
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
         ]);
     }
 }

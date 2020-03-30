@@ -61,8 +61,13 @@ final class MainTimeline implements EventSubscriberInterface
         $this->timelines->removeAll(self::TIMELINE, $event->getFollowerId(), $followingPosts);
     }
 
-    public function ids(int $authorId, int $start = 0, int $stop = 9): array
+    public function count(int $authorId): int
     {
-        return $this->timelines->ids(self::TIMELINE, $authorId, $start, $stop);
+        return $this->timelines->count(self::TIMELINE, $authorId);
+    }
+
+    public function ids(int $authorId, int $start = 0, int $length = 10): array
+    {
+        return $this->timelines->ids(self::TIMELINE, $authorId, $start, $start + $length - 1);
     }
 }

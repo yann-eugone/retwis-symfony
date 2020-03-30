@@ -20,10 +20,23 @@ final class UserTimelineController extends AbstractUserController
         HashidsInterface $hashids
     ): Response {
         $user = $this->getUserByIdOr404($id);
-        $posts = $posts->list($mainTimeline->ids($user->getId()));
+
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $mainTimeline->count($user->getId());
+        $count = 10;
+        $start = $request->query->getInt('start');
+        $posts = $posts->list($mainTimeline->ids($user->getId(), $start, $count));
 
         return $this->render('post/list.html.twig', [
             'posts' => PostListView::new($posts, $this->users, $hashids, $like),
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
         ]);
     }
 
@@ -35,10 +48,23 @@ final class UserTimelineController extends AbstractUserController
         HashidsInterface $hashids
     ): Response {
         $user = $this->getUserByIdOr404($id);
-        $posts = $posts->list($personalTimeline->ids($user->getId()));
+
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $personalTimeline->count($user->getId());
+        $count = 10;
+        $start = $request->query->getInt('start');
+        $posts = $posts->list($personalTimeline->ids($user->getId(), $start, $count));
 
         return $this->render('post/list.html.twig', [
             'posts' => PostListView::new($posts, $this->users, $hashids, $like),
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
         ]);
     }
 }

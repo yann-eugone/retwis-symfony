@@ -54,11 +54,23 @@ final class PostController extends AbstractPostController
         UserStorage $users,
         Like $like
     ): Response {
-        $posts = $recentlyPublished->list();
+        $request = $this->getMasterRequest();
+        if ($request === null) {
+            return Response::create();
+        }
+
+        $total = $recentlyPublished->count();
+        $count = 10;
+        $start = $request->query->getInt('start');
+        $posts = $recentlyPublished->list($start, $count);
         $postsListView = PostListView::new($posts, $users, $this->hashids, $like);
 
         return $this->render('post/list.html.twig', [
             'posts' => $postsListView,
+            'total' => $total,
+            'start' => $start,
+            'count' => $count,
+            'request' => $request,
         ]);
     }
 }

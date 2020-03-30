@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\User\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use function parse_url;
 
 abstract class Controller extends AbstractController
@@ -31,7 +32,7 @@ abstract class Controller extends AbstractController
 
     protected function getValidReferer(): ?string
     {
-        $request = $this->get('request_stack')->getMasterRequest();
+        $request = $this->getMasterRequest();
         if ($request === null) {
             return null;
         }
@@ -44,5 +45,10 @@ abstract class Controller extends AbstractController
         }
 
         return $referer;
+    }
+
+    protected function getMasterRequest(): ?Request
+    {
+        return $this->get('request_stack')->getMasterRequest();
     }
 }

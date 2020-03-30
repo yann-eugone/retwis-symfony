@@ -11,7 +11,7 @@
     {% elseif is_granted(constant('App\\Follow\\Voter\\FollowVoter::UNFOLLOW'), user) %}
         <a class="btn btn-sm btn-primary" href="{{ path('user_unfollow', {'username': user.username}) }}">Unfollow</a>
     {% endif %}
-    <ul class="nav nav-tabs">
+    <ul class="retwis-user-profile-menu nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link {% if section == 'timeline' %}active{% endif %}"
                href="{{ path('user_profile', {'username': user.username}) }}">Posts ({{ posts }})</a>

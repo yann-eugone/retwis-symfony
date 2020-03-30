@@ -1,0 +1,24 @@
+{% if request is defined %}
+    <nav class="retwis-pagination">
+        {% if start > 0 %}
+            <a class="btn btn-outline-primary"
+               href="{{ path(request.get('_route'), request.get('_route_params')|merge({'start': start - count})) }}">
+                Prev
+            </a>
+        {% else %}
+            <button class="btn btn-outline-secondary" disabled>
+                Prev
+            </button>
+        {% endif %}
+        {% if count + start < total %}
+            <a class="btn btn-outline-primary"
+               href="{{ path(request.get('_route'), request.get('_route_params')|merge({'start': start + count})) }}">
+                Next
+            </a>
+        {% else %}
+            <button class="btn btn-outline-secondary" disabled>
+                Next
+            </button>
+        {% endif %}
+    </nav>
+{% endif %}
