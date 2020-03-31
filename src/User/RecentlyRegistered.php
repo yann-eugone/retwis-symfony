@@ -2,22 +2,22 @@
 
 namespace App\User;
 
-use App\Redis\IdList;
 use App\User\Event\UserRegistered;
 use Generator;
+use Predis\ClientInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class RecentlyRegistered implements EventSubscriberInterface
 {
     private const REDIS_KEY = 'users:recently-registered';
 
-    private IdList $list;
+    private ClientInterface $redis;
 
     private UserStorage $users;
 
-    public function __construct(IdList $list, UserStorage $users)
+    public function __construct(ClientInterface $redis, UserStorage $users)
     {
-        $this->list = $list;
+        $this->redis = $redis;
         $this->users = $users;
     }
 
@@ -30,12 +30,12 @@ final class RecentlyRegistered implements EventSubscriberInterface
 
     public function onUserRegistered(UserRegistered $event): void
     {
-        $this->list->push(self::REDIS_KEY, (string)$event->getId(), $event->getRegistered());
+        $this->redis->zadd(self::REDIS_KEY, [$event->getId() => $event->getRegistered()]);
     }
 
     public function count(): int
     {
-        return $this->list->count(self::REDIS_KEY);
+        return $this->redis->zcard(self::REDIS_KEY);
     }
 
     /**
@@ -46,8 +46,8 @@ final class RecentlyRegistered implements EventSubscriberInterface
      */
     public function list(int $start = 0, int $length = 10): Generator
     {
-        yield from $this->users->list(
-            array_map('intval', $this->list->ids(self::REDIS_KEY, $start, $start + $length - 1))
-        );
+        $ids = $this->redis->zrange(self::REDIS_KEY, $start, $start + $length - 1);
+
+        yield from $this->users->list(ints($ids));
     }
 }

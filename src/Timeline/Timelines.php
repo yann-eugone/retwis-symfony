@@ -52,7 +52,7 @@ final class Timelines
     {
         $key = $this->key($timeline, $authorId);
 
-        return array_map('intval', $this->redis->zrange($key, $start, $stop));
+        return ints($this->redis->zrange($key, $start, $stop));
     }
 
     public function map(string $timeline, int $authorId): array
