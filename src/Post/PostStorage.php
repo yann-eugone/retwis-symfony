@@ -3,7 +3,6 @@
 namespace App\Post;
 
 use App\Post\Event\PostPublishedEvent;
-use App\Redis\Ids;
 use App\Redis\ObjectDictionary;
 use Generator;
 use Predis\ClientInterface;
@@ -11,7 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class PostStorage
 {
-    private Ids $ids;
+    private const REDIS_ID_KEY = 'post:next_id';
 
     private ObjectDictionary $objectDictionary;
 
@@ -20,12 +19,10 @@ final class PostStorage
     private EventDispatcherInterface $events;
 
     public function __construct(
-        Ids $ids,
         ObjectDictionary $objectDictionary,
         ClientInterface $redis,
         EventDispatcherInterface $events
     ) {
-        $this->ids = $ids;
         $this->objectDictionary = $objectDictionary;
         $this->redis = $redis;
         $this->events = $events;
@@ -35,7 +32,7 @@ final class PostStorage
     {
         $time ??= time();
 
-        $id = $this->ids->id(Post::class);
+        $id = $this->redis->incr(self::REDIS_ID_KEY);
 
         $post = new Post($id, $author, $message, $time);
 

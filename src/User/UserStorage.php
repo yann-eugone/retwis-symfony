@@ -2,7 +2,6 @@
 
 namespace App\User;
 
-use App\Redis\Ids;
 use App\Redis\NotFoundException;
 use App\Redis\ObjectDictionary;
 use App\User\Event\UserRegistered;
@@ -13,27 +12,25 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 final class UserStorage
 {
+    private const REDIS_ID_KEY = 'users:next_id';
+
     private EncoderFactoryInterface $password;
 
-    private Ids $ids;
+    private ObjectDictionary $objectDictionary;
 
     private ClientInterface $redis;
-
-    private ObjectDictionary $objectDictionary;
 
     private EventDispatcherInterface $events;
 
     public function __construct(
         EncoderFactoryInterface $password,
-        Ids $ids,
-        ClientInterface $redis,
         ObjectDictionary $objectDictionary,
+        ClientInterface $redis,
         EventDispatcherInterface $events
     ) {
         $this->password = $password;
-        $this->ids = $ids;
-        $this->redis = $redis;
         $this->objectDictionary = $objectDictionary;
+        $this->redis = $redis;
         $this->events = $events;
     }
 
@@ -41,7 +38,7 @@ final class UserStorage
     {
         $time ??= time();
 
-        $id = $this->ids->id(User::class);
+        $id = $this->redis->incr(self::REDIS_ID_KEY);
         $password = $this->password->getEncoder(User::class)
             ->encodePassword($plainPassword, null);
 
