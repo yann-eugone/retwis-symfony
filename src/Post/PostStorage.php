@@ -4,34 +4,30 @@ namespace App\Post;
 
 use App\Post\Event\PostPublishedEvent;
 use App\Redis\Ids;
-use App\Redis\Objects;
+use App\Redis\ObjectDictionary;
 use Generator;
+use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class PostStorage
 {
-    /**
-     * @var Ids
-     */
     private Ids $ids;
 
-    /**
-     * @var Objects
-     */
-    private Objects $objects;
+    private ObjectDictionary $objectDictionary;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    private ClientInterface $redis;
+
     private EventDispatcherInterface $events;
 
     public function __construct(
         Ids $ids,
-        Objects $objects,
+        ObjectDictionary $objectDictionary,
+        ClientInterface $redis,
         EventDispatcherInterface $events
     ) {
         $this->ids = $ids;
-        $this->objects = $objects;
+        $this->objectDictionary = $objectDictionary;
+        $this->redis = $redis;
         $this->events = $events;
     }
 
@@ -43,7 +39,11 @@ final class PostStorage
 
         $post = new Post($id, $author, $message, $time);
 
-        $this->objects->add((string)$id, $post);
+        $key = $this->key($id);
+        $dictionary = $this->objectDictionary->dictionary($post);
+
+        $this->redis->hmset($key, $dictionary);
+
         $this->events->dispatch(PostPublishedEvent::fromPost($post));
 
         return $post;
@@ -51,7 +51,10 @@ final class PostStorage
 
     public function get(int $id): Post
     {
-        return $this->objects->get(Post::class, $id);
+        $key = $this->key($id);
+        $dictionary = $this->redis->hgetall($key);
+
+        return $this->objectDictionary->object(Post::class, $dictionary);
     }
 
     /**
@@ -64,5 +67,10 @@ final class PostStorage
         foreach ($ids as $id) {
             yield $this->get($id);
         }
+    }
+
+    private function key(int $id): string
+    {
+        return 'post:' . $id;
     }
 }

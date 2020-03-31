@@ -4,7 +4,7 @@ namespace App\User;
 
 use App\Redis\Ids;
 use App\Redis\NotFoundException;
-use App\Redis\Objects;
+use App\Redis\ObjectDictionary;
 use App\User\Event\UserRegistered;
 use Generator;
 use Predis\ClientInterface;
@@ -17,23 +17,23 @@ final class UserStorage
 
     private Ids $ids;
 
-    private Objects $objects;
-
     private ClientInterface $redis;
+
+    private ObjectDictionary $objectDictionary;
 
     private EventDispatcherInterface $events;
 
     public function __construct(
         EncoderFactoryInterface $password,
         Ids $ids,
-        Objects $objects,
         ClientInterface $redis,
+        ObjectDictionary $objectDictionary,
         EventDispatcherInterface $events
     ) {
         $this->password = $password;
         $this->ids = $ids;
-        $this->objects = $objects;
         $this->redis = $redis;
+        $this->objectDictionary = $objectDictionary;
         $this->events = $events;
     }
 
@@ -47,8 +47,12 @@ final class UserStorage
 
         $user = new User($id, $name, $username, $password, $time);
 
-        $this->objects->add((string)$id, $user);
+        $key = $this->key($id);
+        $dictionary = $this->objectDictionary->dictionary($user);
+
+        $this->redis->hmset($key, $dictionary);
         $this->redis->hset('users:identifiers', $username, $id);
+
         $this->events->dispatch(UserRegistered::fromUser($user));
 
         return $user;
@@ -56,12 +60,18 @@ final class UserStorage
 
     public function update(User $user): void
     {
-        $this->objects->update((string)$user->getId(), $user);
+        $key = $this->key($user->getId());
+        $dictionary = $this->objectDictionary->dictionary($user);
+
+        $this->redis->hmset($key, $dictionary);
     }
 
     public function get(int $id): User
     {
-        return $this->objects->get(User::class, (string)$id);
+        $key = $this->key($id);
+        $dictionary = $this->redis->hgetall($key);
+
+        return $this->objectDictionary->object(User::class, $dictionary);
     }
 
     public function id(string $username): int
@@ -86,5 +96,10 @@ final class UserStorage
         foreach ($ids as $id) {
             yield $this->get($id);
         }
+    }
+
+    private function key(int $id): string
+    {
+        return 'user:' . $id;
     }
 }
