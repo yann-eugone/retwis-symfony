@@ -17,7 +17,11 @@ class AbstractUserController extends Controller
 
     protected function getUserByUsernameOr404(string $username): User
     {
-        return $this->getUserByIdOr404($this->users->id($username));
+        try {
+            return $this->getUserByIdOr404($this->users->id($username));
+        } catch (NotFoundException $exception) {
+            throw $this->createNotFoundException('Not Found', $exception);
+        }
     }
 
     protected function getUserByIdOr404(int $id): User

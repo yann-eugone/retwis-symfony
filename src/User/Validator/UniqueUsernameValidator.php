@@ -2,8 +2,8 @@
 
 namespace App\User\Validator;
 
-use App\Redis\Identifiers;
-use App\User\User;
+use App\Redis\NotFoundException;
+use App\User\UserStorage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -12,11 +12,11 @@ use function is_string;
 
 final class UniqueUsernameValidator extends ConstraintValidator
 {
-    private Identifiers $identifiers;
+    private UserStorage $users;
 
-    public function __construct(Identifiers $identifiers)
+    public function __construct(UserStorage $users)
     {
-        $this->identifiers = $identifiers;
+        $this->users = $users;
     }
 
     public function validate($value, Constraint $constraint): void
@@ -33,7 +33,14 @@ final class UniqueUsernameValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        if ($this->identifiers->has(User::class, $value)) {
+        $used = true;
+        try {
+            $this->users->id($value);
+        } catch (NotFoundException $exception) {
+            $used = false;
+        }
+
+        if ($used) {
             $this->context->addViolation('This username is already used.');
         }
     }

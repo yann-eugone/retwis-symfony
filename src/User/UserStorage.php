@@ -2,11 +2,12 @@
 
 namespace App\User;
 
-use App\Redis\Identifiers;
 use App\Redis\Ids;
+use App\Redis\NotFoundException;
 use App\Redis\Objects;
 use App\User\Event\UserRegistered;
 use Generator;
+use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
@@ -18,7 +19,7 @@ final class UserStorage
 
     private Objects $objects;
 
-    private Identifiers $identifiers;
+    private ClientInterface $redis;
 
     private EventDispatcherInterface $events;
 
@@ -26,13 +27,13 @@ final class UserStorage
         EncoderFactoryInterface $password,
         Ids $ids,
         Objects $objects,
-        Identifiers $identifiers,
+        ClientInterface $redis,
         EventDispatcherInterface $events
     ) {
         $this->password = $password;
         $this->ids = $ids;
         $this->objects = $objects;
-        $this->identifiers = $identifiers;
+        $this->redis = $redis;
         $this->events = $events;
     }
 
@@ -47,7 +48,7 @@ final class UserStorage
         $user = new User($id, $name, $username, $password, $time);
 
         $this->objects->add((string)$id, $user);
-        $this->identifiers->set(User::class, $id, $username);
+        $this->redis->hset('users:identifiers', $username, $id);
         $this->events->dispatch(UserRegistered::fromUser($user));
 
         return $user;
@@ -65,7 +66,14 @@ final class UserStorage
 
     public function id(string $username): int
     {
-        return (int)$this->identifiers->id(User::class, $username);
+        $id = $this->redis->hget('users:identifiers', $username);
+        if (strlen($id) === 0) {
+            throw new NotFoundException(
+                sprintf('There is no user with username %s.', $username)
+            );
+        }
+
+        return (int)$id;
     }
 
     /**
