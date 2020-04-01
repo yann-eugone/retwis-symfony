@@ -59,11 +59,13 @@ final class Follow
         $followingKey = $this->followingKey($followerId);
         $this->redis->zadd($followingKey, [$followingId => $time]);
 
-        $this->events->dispatch(new FollowEvent($followerId, $followingId));
+        $this->events->dispatch(new FollowEvent($followerId, $followingId, $time));
     }
 
-    public function unfollow(int $followerId, int $followingId): void
+    public function unfollow(int $followerId, int $followingId, int $time = null): void
     {
+        $time ??= time();
+
         // remove $followerId from $followingId followers
         $followersKey = $this->followersKey($followingId);
         $this->redis->zrem($followersKey, $followerId);
@@ -72,7 +74,7 @@ final class Follow
         $followingKey = $this->followingKey($followerId);
         $this->redis->zrem($followingKey, $followingId);
 
-        $this->events->dispatch(new UnfollowEvent($followerId, $followingId));
+        $this->events->dispatch(new UnfollowEvent($followerId, $followingId, $time));
     }
 
     public function isFollowing(int $followerId, int $followingId): bool

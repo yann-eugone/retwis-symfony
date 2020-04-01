@@ -4,7 +4,7 @@ namespace App\User;
 
 use App\Redis\NotFoundException;
 use App\Redis\ObjectDictionary;
-use App\User\Event\UserRegistered;
+use App\User\Event\UserRegisteredEvent;
 use Generator;
 use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -50,7 +50,7 @@ final class UserStorage
         $this->redis->hmset($key, $dictionary);
         $this->redis->hset('users:identifiers', $username, $id);
 
-        $this->events->dispatch(UserRegistered::fromUser($user));
+        $this->events->dispatch(UserRegisteredEvent::fromUser($user));
 
         return $user;
     }

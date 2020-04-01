@@ -2,7 +2,7 @@
 
 namespace App\User;
 
-use App\User\Event\UserRegistered;
+use App\User\Event\UserRegisteredEvent;
 use Generator;
 use Predis\ClientInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,11 +24,11 @@ final class RecentlyRegistered implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            UserRegistered::class => 'onUserRegistered',
+            UserRegisteredEvent::class => 'onUserRegistered',
         ];
     }
 
-    public function onUserRegistered(UserRegistered $event): void
+    public function onUserRegistered(UserRegisteredEvent $event): void
     {
         $this->redis->zadd(self::REDIS_KEY, [$event->getId() => $event->getRegistered()]);
     }

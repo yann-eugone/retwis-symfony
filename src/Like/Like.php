@@ -2,15 +2,21 @@
 
 namespace App\Like;
 
+use App\Like\Event\LikeEvent;
+use App\Like\Event\UnlikeEvent;
 use Predis\ClientInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class Like
 {
     private ClientInterface $redis;
 
-    public function __construct(ClientInterface $redis)
+    private EventDispatcherInterface $events;
+
+    public function __construct(ClientInterface $redis, EventDispatcherInterface $events)
     {
         $this->redis = $redis;
+        $this->events = $events;
     }
 
     public function like(int $postId, int $userId, int $time = null): void
@@ -21,15 +27,20 @@ final class Like
 
         $this->redis->zadd($postKey, [$userId => $time]);
         $this->redis->zadd($userKey, [$postId => $time]);
+
+        $this->events->dispatch(new LikeEvent($postId, $userId, $time));
     }
 
-    public function unlike(int $postId, int $userId): void
+    public function unlike(int $postId, int $userId, int $time = null): void
     {
+        $time ??= time();
         $postKey = $this->postKey($postId);
         $userKey = $this->userKey($userId);
 
         $this->redis->zrem($postKey, $userId);
         $this->redis->zrem($userKey, $postId);
+
+        $this->events->dispatch(new UnlikeEvent($postId, $userId, $time));
     }
 
     public function postCount(int $userId): int

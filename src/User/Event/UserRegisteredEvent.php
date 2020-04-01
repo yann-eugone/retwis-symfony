@@ -4,7 +4,7 @@ namespace App\User\Event;
 
 use App\User\User;
 
-final class UserRegistered
+final class UserRegisteredEvent
 {
     private int $id;
 
