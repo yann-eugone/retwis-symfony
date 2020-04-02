@@ -14,6 +14,7 @@ use Generator;
 use Predis\ClientInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -53,6 +54,7 @@ final class LoadFixturesCommand extends Command
 
     protected function configure(): void
     {
+        $this->addOption('users', 'u', InputOption::VALUE_REQUIRED, 'Users count to load', 100);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -67,7 +69,7 @@ final class LoadFixturesCommand extends Command
 
         $faker = FakerFactory::create();
 
-        $users = iterator_to_array($this->users($io, $faker));
+        $users = iterator_to_array($this->users($input->getOption('users'), $io, $faker));
         $this->followers($io, $faker, $users);
         $posts = iterator_to_array($this->posts($io, $faker, $users));
         $this->likes($io, $faker, $posts, $users);
@@ -76,23 +78,23 @@ final class LoadFixturesCommand extends Command
     }
 
     /**
+     * @param int          $users
      * @param SymfonyStyle $io
      * @param Faker        $faker
      *
      * @return Generator&User[]
      */
-    private function users(SymfonyStyle $io, Faker $faker): Generator
+    private function users(int $users, SymfonyStyle $io, Faker $faker): Generator
     {
-        $idx = $faker->numberBetween(80, 100);
-        $countUsers = $idx;
-        $io->progressStart($countUsers);
+        $idx = $users;
+        $io->progressStart($users);
         do {
             $username = $faker->unique()->userName;
             $password = $username;
             if ($faker->boolean(80)) {
                 $name = $faker->firstName;
                 if ($faker->boolean(80)) {
-                    $name .= ' '.$faker->lastName;
+                    $name .= ' ' . $faker->lastName;
                 }
             } else {
                 $name = $faker->userName;
@@ -117,7 +119,7 @@ final class LoadFixturesCommand extends Command
         } while (--$idx);
 
         $io->progressFinish();
-        $io->success('Registered ' . $countUsers . ' users');
+        $io->success('Registered ' . $users . ' users');
     }
 
     /**
@@ -149,7 +151,8 @@ final class LoadFixturesCommand extends Command
             $following = $faker->randomElements($followingCandidates, $countFollowing);
             /** @var User $user */
             foreach ($following as $user) {
-                $this->follow->follow($follower->getId(), $user->getId(), $this->timestamp($faker, $user->getRegistered()));
+                $this->follow->follow($follower->getId(), $user->getId(),
+                    $this->timestamp($faker, $user->getRegistered()));
             }
 
             $io->progressAdvance();
