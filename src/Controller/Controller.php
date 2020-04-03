@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use function parse_url;
+use const PHP_URL_HOST;
 
 abstract class Controller extends AbstractController
 {
@@ -37,7 +38,7 @@ abstract class Controller extends AbstractController
             return null;
         }
         $referer = $request->headers->get('referer');
-        if ($referer !== null) {
+        if ($referer === null) {
             return null;
         }
         if ($request->getHost() !== parse_url($referer, PHP_URL_HOST)) {
