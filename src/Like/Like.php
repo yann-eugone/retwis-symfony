@@ -62,7 +62,7 @@ final class Like
     {
         $key = $this->userKey($userId);
 
-        return ints($this->redis->zrange($key, $start, $start + $length - 1));
+        return ints($this->redis->zrevrange($key, $start, $start + $length - 1));
     }
 
     public function userCount(int $postId): int
@@ -83,7 +83,7 @@ final class Like
     {
         $key = $this->postKey($postId);
 
-        return ints($this->redis->zrange($key, $start, $start + $length - 1));
+        return ints($this->redis->zrevrange($key, $start, $start + $length - 1));
     }
 
     public function isLiking(int $postId, int $userId): bool

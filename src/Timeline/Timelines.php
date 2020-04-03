@@ -53,14 +53,14 @@ final class Timelines
     {
         $key = $this->key($timeline, $authorId);
 
-        return ints($this->redis->zrange($key, $start, $stop));
+        return ints($this->redis->zrevrange($key, $start, $stop));
     }
 
     public function map(string $timeline, int $authorId): array
     {
         $key = $this->key($timeline, $authorId);
 
-        return $this->redis->zrange($key, 0, -1, ['withscores' => true]);
+        return $this->redis->zrevrange($key, 0, -1, ['withscores' => true]);
     }
 
     private function key(string $type, int $authorId): string

@@ -47,7 +47,7 @@ final class RecentlyRegistered implements EventSubscriberInterface
      */
     public function list(int $start = 0, int $length = 10): Generator
     {
-        $ids = $this->redis->zrange(self::REDIS_KEY, $start, $start + $length - 1);
+        $ids = $this->redis->zrevrange(self::REDIS_KEY, $start, $start + $length - 1);
 
         yield from $this->users->list(ints($ids));
     }

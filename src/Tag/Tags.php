@@ -76,7 +76,7 @@ final class Tags implements EventSubscriberInterface
     {
         $key = $this->tagKey($tag);
 
-        return ints($this->redis->zrange($key, $start, $start + $length - 1));
+        return ints($this->redis->zrevrange($key, $start, $start + $length - 1));
     }
 
     /**

@@ -24,7 +24,7 @@ final class Follow
     {
         $key = $this->followingKey($userId);
 
-        return ints($this->redis->zrange($key, $start, $stop));
+        return ints($this->redis->zrevrange($key, $start, $stop));
     }
 
     public function followingCount(int $userId): int
@@ -38,7 +38,7 @@ final class Follow
     {
         $key = $this->followersKey($userId);
 
-        return ints($this->redis->zrange($key, $start, $stop));
+        return ints($this->redis->zrevrange($key, $start, $stop));
     }
 
     public function followersCount(int $userId): int
