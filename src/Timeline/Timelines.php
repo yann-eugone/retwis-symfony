@@ -3,6 +3,7 @@
 namespace App\Timeline;
 
 use Predis\ClientInterface;
+use function ints;
 
 final class Timelines
 {

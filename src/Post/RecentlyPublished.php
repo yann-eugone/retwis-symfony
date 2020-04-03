@@ -6,6 +6,7 @@ use App\Post\Event\PostPublishedEvent;
 use Generator;
 use Predis\ClientInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use function ints;
 
 final class RecentlyPublished implements EventSubscriberInterface
 {

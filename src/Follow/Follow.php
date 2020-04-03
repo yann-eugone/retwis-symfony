@@ -6,6 +6,7 @@ use App\Follow\Event\FollowEvent;
 use App\Follow\Event\UnfollowEvent;
 use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use function ints;
 
 final class Follow
 {

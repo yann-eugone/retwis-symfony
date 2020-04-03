@@ -6,6 +6,7 @@ use App\Like\Event\LikeEvent;
 use App\Like\Event\UnlikeEvent;
 use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use function ints;
 
 final class Like
 {
