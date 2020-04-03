@@ -7,10 +7,11 @@ use App\Like\Like;
 use App\Timeline\PersonalTimeline;
 use App\User\Form\FillProfileForm;
 use App\User\Form\FillProfileFormModel;
-use App\User\RecentlyRegistered;
+use App\User\RecentlyRegisteredUsers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function flip_generator;
 
 final class UserController extends AbstractUserController
 {
@@ -66,10 +67,15 @@ final class UserController extends AbstractUserController
         return $this->redirectToRoute('user_profile', ['username' => $user->getUsername()]);
     }
 
-    public function recentlyRegistered(RecentlyRegistered $recentlyRegistered): Response
+    public function recentlyRegistered(RecentlyRegisteredUsers $recentlyRegistered): Response
     {
+        // cannot array_flip because values are scores : not unique, use a generator instead
+        $usersWithTime = flip_generator(
+            $recentlyRegistered->list(0, 5)
+        );
+
         return $this->render('user/recently-registered.html.twig', [
-            'users' => $recentlyRegistered->list(),
+            'users' => $this->users->list($usersWithTime),
         ]);
     }
 }

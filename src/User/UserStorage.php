@@ -9,6 +9,7 @@ use Generator;
 use Predis\ClientInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use function dump;
 
 final class UserStorage
 {
@@ -90,8 +91,9 @@ final class UserStorage
      */
     public function list(iterable $ids): Generator
     {
-        foreach ($ids as $id) {
-            yield $this->get($id);
+        foreach ($ids as $index => $id) {
+            dump($id);
+            yield $index => $this->get($id);
         }
     }
 

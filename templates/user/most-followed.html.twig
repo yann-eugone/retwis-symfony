@@ -1,12 +1,12 @@
 {# @var user \App\User\User #}
-<h4 class="font-italic">Recently registered users</h4>
+<h4 class="font-italic">Most followed users</h4>
 <div class="retwis-trending-users list-group">
-    {% for registerTime,user in users %}
+    {% for followerCount,user in users %}
         <div class="retwis-trending-user list-group-item flex-column align-items-start">
             <h5 class="retwis-trending-user-link mb-1">
                 <a href="{{ path('user_profile', {'username': user.username}) }}">{{ user.name }}</a>
             </h5>
-            <p class="mb-1 retwis-trending-user-posts">{{ registerTime|date('F d, Y') }}</p>
+            <p class="mb-1 retwis-trending-user-posts">{{ followerCount }} followers</p>
         </div>
     {% endfor %}
 </div>

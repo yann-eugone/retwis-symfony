@@ -6,6 +6,7 @@
             as a demo for the <a href="https://redis.io">Redis</a> key-value database.
         </p>
     </div>
-    {{ render(controller('App\\Controller\\UserController::recentlyRegistered')) }}
+    {{ render(controller('App\\Controller\\UserFollowController::mostFollowed')) }}
     {{ render(controller('App\\Controller\\TagController::trending')) }}
+    {{ render(controller('App\\Controller\\UserController::recentlyRegistered')) }}
 </aside>
