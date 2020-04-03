@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'sdfgusdyf' %}
+
+{% block body %}
+    <h1 class="pb-3 mb-4 font-italic border-bottom">Trending tags</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {% include 'tag/trending.html.twig' %}
+            {% include '_pagination.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

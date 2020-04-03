@@ -1,0 +1,13 @@
+<div class="retwis-trending-tags list-group">
+    {% for tag,postCount in trending %}
+        <div class="retwis-trending-tag list-group-item flex-column align-items-start">
+            <div class="d-flex justify-content-between">
+                <h5 class="retwis-trending-tag-link mb-1">
+                    <a href="{{ path('tag_show', {'tag': tag}) }}">#{{ tag }}</a>
+                </h5>
+                <small class="retwis-trending-tag-position text-muted">#{{ start + loop.index }} Trending</small>
+            </div>
+            <p class="mb-1 retwis-trending-tag-posts">{{ postCount }} posts</p>
+        </div>
+    {% endfor %}
+</div>

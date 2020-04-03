@@ -8,7 +8,7 @@
                 <small>@{{ post.author.username }}</small>
             </a>
         </p>
-        {{ post.message|nl2br }}
+        {{ post.message|nl2br|tag_links|raw }}
         <div class="retwis-post-actions text-right">
             <a class="btn btn-sm btn-outline-primary" href="{{ path('post_show', {'id': post.hash}) }}">
                 Show

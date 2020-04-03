@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title '#'~tag %}
+
+{% block body %}
+    <h1 class="pb-3 mb-4 font-italic border-bottom">#{{ tag }}</h1>
+    <div class="row mb-4">
+        <div class="col-6">
+            <span class="text-muted">{{ total }} posts</span>
+            <span class="text-muted">Since {{ emergence|date('F d, Y') }}</span>
+        </div>
+    </div>
+    {% include 'post/list.html.twig' %}
+{% endblock %}

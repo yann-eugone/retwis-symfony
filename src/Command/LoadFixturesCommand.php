@@ -18,6 +18,16 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function array_combine;
+use function array_filter;
+use function array_map;
+use function count;
+use function min;
+use function preg_replace;
+use function str_word_count;
+use function strlen;
+use function strtr;
+use function trim;
 
 final class LoadFixturesCommand extends Command
 {
@@ -187,6 +197,21 @@ final class LoadFixturesCommand extends Command
             $countPosts += $idx;
             do {
                 $message = $faker->text($faker->numberBetween(10, 280));
+                if ($faker->boolean()) {
+                    // find/normalize/filter words in message
+                    $words = str_word_count($message, 1);
+                    $words = array_map(fn(string $word): string => trim($word, '.'), $words);
+                    $words = array_filter($words, fn(string $word): bool => strlen($word) > 3);
+                    if (count($words) > 0) {
+                        // pick some words to transform into #tags
+                        $tags = $faker->randomElements($words, $faker->numberBetween(1, min(count($words), 3)));
+
+                        // replace message with tags
+                        $search = array_map(fn(string $word): string => "/\b{$word}\b/i", $tags);
+                        $replace = array_map(fn(string $word): string => "#{$word}", $tags);
+                        $message = preg_replace($search, $replace, $message);
+                    }
+                }
 
                 $post = $this->posts->publish(
                     $author->getId(),
