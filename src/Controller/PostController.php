@@ -2,14 +2,11 @@
 
 namespace App\Controller;
 
-use App\Like\Like;
 use App\Post\Form\PublishForm;
 use App\Post\Form\PublishFormModel;
 use App\Post\RecentlyPublished;
 use App\Post\Voter\PublishVoter;
-use App\User\UserStorage;
-use App\View\PostListView;
-use App\View\PostView;
+use App\View\ViewFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,20 +37,17 @@ final class PostController extends AbstractPostController
     /**
      * @Route("/post/{id}", name="post_show", methods=Request::METHOD_GET)
      */
-    public function show(string $id, UserStorage $users, Like $like): Response
+    public function show(string $id, ViewFactory $views): Response
     {
         $post = $this->getPostByHashIdOr404($id);
 
         return $this->render('post/show.html.twig', [
-            'post' => PostView::new($post, $users, $this->hashids, $like),
+            'post' => $views->post($post),
         ]);
     }
 
-    public function recentlyPublished(
-        RecentlyPublished $recentlyPublished,
-        UserStorage $users,
-        Like $like
-    ): Response {
+    public function recentlyPublished(RecentlyPublished $recentlyPublished, ViewFactory $views): Response
+    {
         $request = $this->getMasterRequest();
         if ($request === null) {
             return Response::create();
@@ -63,7 +57,7 @@ final class PostController extends AbstractPostController
         $count = 10;
         $start = $request->query->getInt('start');
         $posts = $recentlyPublished->list($start, $count);
-        $postsListView = PostListView::new($posts, $users, $this->hashids, $like);
+        $postsListView = $views->posts($posts);
 
         return $this->render('post/list.html.twig', [
             'posts' => $postsListView,

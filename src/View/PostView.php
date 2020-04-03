@@ -2,12 +2,8 @@
 
 namespace App\View;
 
-use App\Like\Like;
-use App\Post\Post;
 use App\User\User;
-use App\User\UserStorage;
 use DateTimeImmutable;
-use Hashids\HashidsInterface;
 
 final class PostView
 {
@@ -23,7 +19,7 @@ final class PostView
 
     private int $likes;
 
-    private function __construct(int $id, string $hash, User $author, string $message, DateTimeImmutable $published, int $likes)
+    public function __construct(int $id, string $hash, User $author, string $message, DateTimeImmutable $published, int $likes)
     {
         $this->id = $id;
         $this->hash = $hash;
@@ -31,18 +27,6 @@ final class PostView
         $this->message = $message;
         $this->published = $published;
         $this->likes = $likes;
-    }
-
-    public static function new(Post $post, UserStorage $users, HashidsInterface $hashids, Like $like): self
-    {
-        return new self(
-            $post->getId(),
-            $hashids->encode($post->getId()),
-            $users->get($post->getAuthor()),
-            $post->getMessage(),
-            (new DateTimeImmutable())->setTimestamp($post->getPublished()),
-            $like->postCount($post->getId())
-        );
     }
 
     public function getId(): int
